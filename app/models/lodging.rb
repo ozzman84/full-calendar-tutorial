@@ -4,9 +4,15 @@ class Lodging < ApplicationRecord
 
   def calendar
     # binding.pry
-    first_day = start_date.beginning_of_month.beginning_of_week(:monday)
-    last_day = start_date.end_of_month.end_of_week(:monday)
+    first_day = Date.today.beginning_of_month.beginning_of_week(:monday)
+    last_day = Date.today.end_of_month.end_of_week(:monday)
     
     (first_day..(last_day)).to_a
+  end
+
+    def combined_month
+    calendar.map do |day|
+      LodgingConfirmation.find_by(date: day) || day
+    end
   end
 end

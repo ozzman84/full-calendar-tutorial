@@ -1,11 +1,4 @@
-<h1>LodgingConfirmations#index</h1>
-
-
-<% @lodging_confirmations.each do |conf| %>
-    <%= "#{conf.date.strftime("%B")}" %>
-<% end %>
-
-<div class="md:grid md:grid-cols-2 md:divide-x md:divide-gray-200">
+<div class="md:grid md:grid-cols-2 md:divide-x md:divide-gray-200 justify-center">
   <div class="md:pr-14">
     <div class="flex items-center">
       <h2 class="flex-auto text-sm font-semibold text-gray-900">January 2022</h2>
@@ -31,26 +24,49 @@
       <div>S</div>
       <div>S</div>
     </div>
-    <div class="mt-2 grid grid-cols-7 text-sm">
-    <% @lodging.calendar.each do |date| %>
-        
-      <div class="py-2">
         <!--
           Always include: "mx-auto flex h-8 w-8 items-center justify-center rounded-full"
           Is selected, include: "text-white"
-          Is not selected and is today, include: "text-indigo-600"
-          Is not selected and is not today and is current month, include: "text-gray-900"
-          Is not selected and is not today and is not current month, include: "text-gray-400"
-          Is selected and is today, include: "bg-indigo-600"
+          Has no status and is today, include: "text-indigo-600"
+          No status and is not today and is current month, include: "text-gray-900"
+          No status and is not today and is not current month, include: "text-gray-400"
+          Status is  and is today, include: "bg-indigo-600"
           Is selected and is not today, include: "bg-gray-900"
           Is not selected, include: "hover:bg-gray-200"
           Is selected or is today, include: "font-semibold"
         -->
-        <button type="button" class="mx-auto flex h-8 w-8 items-center justify-center rounded-full text-gray-400 hover:bg-gray-200">
-          <time datetime=<%= date %>><%= date.day %></time>
-        </button>
-      </div>
-    <% end %>
+    <div class="mt-2 grid grid-cols-7 text-sm">
+        <% @lodging.combined_month.each do |date| %>
+          <div class="py-2">
+            <!--
+            <button type="button" class="<%= @lodging_confirmations[date] %>">
+              <time datetime="<%= date %>"><%= date.is_a?(LodgingConfirmation) ? date.date.day : date.day %></time>
+            </button>
+            -->
+            <button type="button" class="mx-auto flex h-10 w-10 items-center justify-center rounded-full
+              <% if date.is_a?(LodgingConfirmation) %>
+                <%# text-white %>
+                <% case date.status %>
+                  <% when "staying" %>
+                    bg-red-900
+                  <% when "away" %>
+                    bg-red-500
+                  <% else %>
+                    
+                    bg-red-900
+                <% end %>
+              <% elsif date.today? %>
+                text-indigo-600
+              <% else %>
+                text-gray-400
+              <% end %>
+              hover:bg-gray-200
+              <%= date.is_a?(LodgingConfirmation) || date.today? ? 'font-semibold' : '' %>"
+            >
+              <time datetime="<%= date %>"><%= date.is_a?(LodgingConfirmation) ? date.date.day : date.day %></time>
+            </button>
+          </div>
+        <% end %>
     </div>
   </div>
   <section class="mt-12 md:mt-0 md:pl-14">
